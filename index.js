@@ -2,11 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-require('dotenv').config();
+
 
 // إعداد التطبيق
 const app = express();
-const port = process.env.PORT || 9000;
+const port =  9000;
 
 // إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
 const corsOptions = {
@@ -19,7 +19,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // اتصال بقاعدة بيانات MongoDB Atlas باستخدام متغير البيئة
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/local_database';
+const mongoUri = 'mongodb+srv://username:password@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -82,9 +82,8 @@ app.delete('/questions', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on https://quiz-back-rose.vercel.app:${port}`);
 });
+
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-app.get('/questions', (req, res) => {
-  res.send('Questions API is working');
+
+  res.send('Hello World!')
 });
