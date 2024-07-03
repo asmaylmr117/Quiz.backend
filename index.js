@@ -2,23 +2,22 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
-
 // إعداد التطبيق
 const app = express();
 const port =  9000;
 
 // إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
+
 const corsOptions = {
-  origin: 'https://quiz-front-gules.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  //https://royal-corner.vercel.app
+  origin: 'https://quiz-backend-rose.vercel.app',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-// اتصال بقاعدة بيانات MongoDB Atlas باستخدام متغير البيئة
+// اتصال بقاعدة بيانات MongoDB Atlas 
 const mongoUri = 'mongodb+srv://username:password@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
