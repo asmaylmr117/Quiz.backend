@@ -9,9 +9,9 @@ const port =  9000;
 // إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
 
 const corsOptions = {
-  //https://royal-corner.vercel.app
+  
   origin: 'https://quiz-backend-rose.vercel.app',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200 ,
 };
 
 app.use(cors(corsOptions));
