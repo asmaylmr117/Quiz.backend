@@ -18,17 +18,21 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // اتصال بقاعدة بيانات MongoDB Atlas 
-const mongoUri = 'mongodb+srv://username:password@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'
-mongoose.connect(mongoUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => {
-  console.log('MongoDB Atlas connected');
-})
-.catch((err) => {
-  console.error('Error connecting to MongoDB Atlas:', err.message);
-});
+
+// دالة الاتصال بقاعدة بيانات MongoDB Atlas
+const connectDB = async () => {
+  try {
+    await mongoose.connect('mongodb+srv://username:password@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'); 
+              
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1); // إنهاء العملية في حالة الفشل
+  }
+};
+
+// استدعاء دالة الاتصال بقاعدة البيانات
+ connectDB();
 
 // تعريف نموذج السؤال
 const questionSchema = new mongoose.Schema({
