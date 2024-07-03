@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+
+
 // إعداد التطبيق
 const app = express();
 const port =  9000;
@@ -9,15 +11,14 @@ const port =  9000;
 // إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
 
 const corsOptions = {
-  
-  origin: 'https://quiz-backend-rose.vercel.app',
-  optionsSuccessStatus: 200 ,
+ 
+  origin: 'https://quiz-backend-rose.vercel.app/',
+  optionsSuccessStatus: 200 , 
 };
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-// اتصال بقاعدة بيانات MongoDB Atlas 
 
 // دالة الاتصال بقاعدة بيانات MongoDB Atlas
 const connectDB = async () => {
@@ -33,7 +34,6 @@ const connectDB = async () => {
 
 // استدعاء دالة الاتصال بقاعدة البيانات
  connectDB();
-
 // تعريف نموذج السؤال
 const questionSchema = new mongoose.Schema({
   question: { type: String, required: true },
@@ -90,3 +90,7 @@ app.get('/', (req, res) => {
 
   res.send('Hello World!');
 });
+
+
+
+
