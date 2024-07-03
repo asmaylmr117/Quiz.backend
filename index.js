@@ -11,9 +11,9 @@ const port =  9000;
 // إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
 
 const corsOptions = {
-  origin: ['https://quiz-front-gules.vercel.app'], // ضع هنا الدومين الأمامي الخاص بك
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+ 
+  origin: 'https://quiz-front-gules.vercel.app',
+  optionsSuccessStatus: 200 
 };
 
 app.use(cors(corsOptions));
