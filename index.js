@@ -85,3 +85,6 @@ app.listen(port, () => {
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+app.get('/questions', (req, res) => {
+  res.send('Questions API is working');
+});
