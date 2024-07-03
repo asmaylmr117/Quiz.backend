@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 // دالة الاتصال بقاعدة بيانات MongoDB Atlas
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://username:password@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority'); 
+    await mongoose.connect('mongodb+srv://asmylmr117:LOLvpyeF6TM5HqIv@cluster0.je83y06.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'); 
               
     console.log('MongoDB connected');
   } catch (error) {
