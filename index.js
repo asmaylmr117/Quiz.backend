@@ -82,3 +82,6 @@ app.delete('/questions', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on https://quiz-back-rose.vercel.app:${port}`);
 });
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
