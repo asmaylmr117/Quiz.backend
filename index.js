@@ -4,15 +4,14 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 
-// إعداد التطبيق
 const app = express();
 const port =  9000;
 
-// إعداد CORS للسماح بجميع المصادر (يمكن تخصيصها حسب الحاجة)
+
 
 const corsOptions = {
  
-  origin: 'https://quiz-front-gules.vercel.app',
+  origin: '*',
   optionsSuccessStatus: 200 
 };
 
@@ -28,13 +27,13 @@ const connectDB = async () => {
     console.log('MongoDB connected');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-    process.exit(1); // إنهاء العملية في حالة الفشل
+    process.exit(1); 
   }
 };
 
-// استدعاء دالة الاتصال بقاعدة البيانات
+// 
  connectDB();
-// تعريف نموذج السؤال
+
 const questionSchema = new mongoose.Schema({
   question: { type: String, required: true },
   a: { type: String, required: true },
@@ -46,7 +45,7 @@ const questionSchema = new mongoose.Schema({
 
 const Question = mongoose.model('Question', questionSchema);
 
-// واجهة برمجة التطبيقات (API) لإضافة سؤال
+
 app.post('/questions', async (req, res) => {
   try {
     const { question, a, b, c, d, correct } = req.body;
@@ -60,7 +59,7 @@ app.post('/questions', async (req, res) => {
   }
 });
 
-// واجهة برمجة التطبيقات (API) للحصول على الأسئلة
+
 app.get('/questions', async (req, res) => {
   try {
     const questions = await Question.find();
@@ -71,7 +70,7 @@ app.get('/questions', async (req, res) => {
   }
 });
 
-// واجهة برمجة التطبيقات (API) لحذف جميع الأسئلة
+
 app.delete('/questions', async (req, res) => {
   try {
     await Question.deleteMany({});
@@ -81,7 +80,6 @@ app.delete('/questions', async (req, res) => {
   }
 });
 
-// بدء الخادم
 app.listen(port, () => {
   console.log(`Server is running on https://quiz-back-rose.vercel.app:${port}`);
 });
@@ -90,6 +88,7 @@ app.get('/', (req, res) => {
 
   res.send('Hello World!');
 });
+
 
 
 
