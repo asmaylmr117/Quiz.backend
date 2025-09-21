@@ -83,6 +83,13 @@ app.post('/auth/register', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     
+    // منع تسجيل admin من الواجهة العامة
+    if (role === 'admin') {
+      return res.status(403).json({ 
+        error: 'Admin accounts can only be created by existing administrators. Please contact system admin.' 
+      });
+    }
+
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -96,7 +103,7 @@ app.post('/auth/register', async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role
+      role: role || 'student' // default to student
     });
 
     await newUser.save();
@@ -119,6 +126,92 @@ app.post('/auth/register', async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// إنشاء أول admin في حالة عدم وجود أي admin (للإعداد الأولي فقط)
+app.post('/setup/first-admin', async (req, res) => {
+  try {
+    // التحقق من عدم وجود أي admin
+    const adminExists = await User.findOne({ role: 'admin' });
+    if (adminExists) {
+      return res.status(403).json({ error: 'System already has an admin. Contact existing admin to create new admin accounts.' });
+    }
+
+    const { name, email, password } = req.body;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const firstAdmin = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'admin'
+    });
+
+    await firstAdmin.save();
+    
+    const token = jwt.sign(
+      { userId: firstAdmin._id, email: firstAdmin.email, role: firstAdmin.role },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: firstAdmin._id,
+        name: firstAdmin.name,
+        email: firstAdmin.email,
+        role: firstAdmin.role
+      }
+    });
+  } catch (error) {
+    console.error('First admin setup error:', error);
+    res.status(500).json({ error: 'Setup failed' });
+  }
+});
+
+// إنشاء أدمن جديد من قبل أدمن موجود
+app.post('/admin/create-admin', authenticateToken, async (req, res) => {
+  try {
+    // التحقق من أن المستخدم الحالي admin
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Only admin can create new admin accounts' });
+    }
+
+    const { name, email, password } = req.body;
+    
+    // التحقق من عدم وجود المستخدم مسبقاً
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const newAdmin = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'admin'
+    });
+
+    await newAdmin.save();
+    
+    res.json({
+      message: 'New admin created successfully',
+      admin: {
+        id: newAdmin._id,
+        name: newAdmin.name,
+        email: newAdmin.email,
+        role: newAdmin.role
+      }
+    });
+  } catch (error) {
+    console.error('Create admin error:', error);
+    res.status(500).json({ error: 'Failed to create admin' });
   }
 });
 
