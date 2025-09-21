@@ -4,11 +4,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 9000;
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = 'quiz-app-secret-key-2024';
 
 const corsOptions = {
   origin: '*',
@@ -21,7 +20,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect('mongodb+srv://asmylmr117:LOLvpyeF6TM5HqIv@cluster0.je83y06.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
     console.log('MongoDB connected');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
@@ -84,24 +83,27 @@ app.post('/auth/register', async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
     
+    // منع تسجيل admin من الواجهة العامة
     if (role === 'admin') {
       return res.status(403).json({ 
         error: 'Admin accounts can only be created by existing administrators. Please contact system admin.' 
       });
     }
 
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: role || 'student'
+      role: role || 'student' // default to student
     });
 
     await newUser.save();
@@ -127,8 +129,10 @@ app.post('/auth/register', async (req, res) => {
   }
 });
 
+// إنشاء أول admin في حالة عدم وجود أي admin (للإعداد الأولي فقط)
 app.post('/setup/first-admin', async (req, res) => {
   try {
+    // التحقق من عدم وجود أي admin
     const adminExists = await User.findOne({ role: 'admin' });
     if (adminExists) {
       return res.status(403).json({ error: 'System already has an admin. Contact existing admin to create new admin accounts.' });
@@ -168,19 +172,23 @@ app.post('/setup/first-admin', async (req, res) => {
   }
 });
 
+// إنشاء أدمن جديد من قبل أدمن موجود
 app.post('/admin/create-admin', authenticateToken, async (req, res) => {
   try {
+    // التحقق من أن المستخدم الحالي admin
     if (req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Only admin can create new admin accounts' });
     }
 
     const { name, email, password } = req.body;
     
+    // التحقق من عدم وجود المستخدم مسبقاً
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
     const newAdmin = new User({
@@ -373,7 +381,7 @@ app.post('/results', authenticateToken, async (req, res) => {
   try {
     const { score, totalQuestions } = req.body;
     const percentage = Math.round((score / totalQuestions) * 100);
-    const passed = percentage >= 60;
+    const passed = percentage >= 60; // 60% passing grade
     
     const user = await User.findById(req.user.userId);
     
@@ -447,4 +455,6 @@ app.get('/', (req, res) => {
   res.send('Quiz App Backend API');
 });
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
