@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 9000;
-const JWT_SECRET = 'quiz-app-secret-key-2024';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const corsOptions = {
   origin: '*',
@@ -20,7 +21,7 @@ app.use(bodyParser.json());
 // MongoDB Connection
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://asmylmr117:LOLvpyeF6TM5HqIv@cluster0.je83y06.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('MongoDB connected');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
@@ -458,3 +459,4 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
