@@ -11,7 +11,7 @@ const port = process.env.PORT || 9000;
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const corsOptions = {
-  origin: '*',
+  origin: 'https://quiz-front-t8ti.vercel.app/',
   optionsSuccessStatus: 200 
 };
 
@@ -459,5 +459,6 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
 
 
